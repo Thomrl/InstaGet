@@ -1,6 +1,5 @@
 #! python3.5
-import bs4 as bs
-import requests, sys, os
+import bs4 as bs, requests, sys, os
 
 uInput = sys.argv[1] #instagram link please
 
@@ -13,14 +12,17 @@ find = soup.find("meta", property="og:image") #python looks for this in the sour
 findstr = str(find) 
 imageurl = findstr[15:-23]
 filename = imageurl[57:]
+username =  uInput.split("=", 1)[1]
 print("imageurl = " + imageurl)
 print("filename = " + filename)
+print("username = " + username)
+print("saved as = " + username+"_"+filename)
 
 instaimg = requests.get(imageurl)
 #instaimg.status_code
 os.chdir("E:\\instagram") #Where you want i saved
 curpath = os.getcwd() #passing the directory to a variable so python can print it later
-file = open(filename, "wb")
+file = open(username+"_"+filename, "wb")
 for chunk in instaimg.iter_content(100000):
     file.write(chunk)
 file.close()
