@@ -7,7 +7,6 @@ if len(sys.argv) > 1:
 else:
     uInput = pyperclip.paste()
 
-
 sauce = requests.get(uInput) #python looks up the link
 print("Given url: " +uInput) #python tells you which link it looks at
 #sauce.raise_for_status()
@@ -18,10 +17,10 @@ findstr = str(find)
 imageurl = findstr[15:-23]
 filename = imageurl[57:]
 username =  uInput.split("=", 1)[1]
-print("imageurl = " + imageurl)
-print("filename = " + filename)
-print("username = " + username)
-print("saved as = " + username+"_"+filename)
+print("Imageurl = " + imageurl)
+print("Filename = " + filename)
+print("Username = " + username)
+print("Saved as = " + username+"_"+filename)
 
 instaimg = requests.get(imageurl)
 #instaimg.status_code
@@ -31,4 +30,4 @@ file = open(username+"_"+filename, "wb")
 for chunk in instaimg.iter_content(100000):
     file.write(chunk)
 file.close()
-print("File should be saved to: " + curpath)
+print("File saved to: " + curpath)
