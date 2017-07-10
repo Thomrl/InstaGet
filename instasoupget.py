@@ -1,7 +1,12 @@
 #! python3.5
-import bs4 as bs, requests, sys, os
+import bs4 as bs, requests, sys, os, pyperclip
 
-uInput = sys.argv[1] #instagram link please
+sys.argv #instagram link please
+if len(sys.argv) > 1:
+    uInput = " ".join(sys.argv[1:])
+else:
+    uInput = pyperclip.paste()
+
 
 sauce = requests.get(uInput) #python looks up the link
 print("Given url: " +uInput) #python tells you which link it looks at
