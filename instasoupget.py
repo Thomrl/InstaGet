@@ -26,7 +26,13 @@ instaimg = requests.get(imageurl)
 #instaimg.status_code
 os.chdir("E:\\instagram") #Where you want i saved
 curpath = os.getcwd() #passing the directory to a variable so python can print it later
-file = open(username+"_"+filename, "wb")
+if len(filename) < 2:
+    os.chdir("notInstagram")
+    curpath = os.getcwd()
+    file = open(username+"_"+filename+".jpg", "wb")
+else:
+    file = open(username+"_"+filename, "wb")
+
 for chunk in instaimg.iter_content(100000):
     file.write(chunk)
 file.close()
