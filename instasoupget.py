@@ -1,7 +1,6 @@
 #! python3.5
 import bs4 as bs, requests, sys, os, pyperclip
 
-sys.argv #instagram link please
 if len(sys.argv) > 1:
     uInput = " ".join(sys.argv[1:])
 else:
@@ -20,7 +19,6 @@ username =  uInput.split("=", 1)[1]
 print("Imageurl = " + imageurl)
 print("Filename = " + filename)
 print("Username = " + username)
-print("Saved as = " + username+"_"+filename)
 
 instaimg = requests.get(imageurl)
 #instaimg.status_code
@@ -29,9 +27,11 @@ curpath = os.getcwd() #passing the directory to a variable so python can print i
 if len(filename) < 2:
     os.chdir("notInstagram")
     curpath = os.getcwd()
+    print("Saved as = " + username+"_"+filename+".jpg")
     file = open(username+"_"+filename+".jpg", "wb")
 else:
     file = open(username+"_"+filename, "wb")
+    print("Saved as = " + username+"_"+filename)
 
 for chunk in instaimg.iter_content(100000):
     file.write(chunk)
