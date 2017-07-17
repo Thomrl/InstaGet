@@ -20,92 +20,74 @@ soup = bs.BeautifulSoup(sauce.text, "lxml") #making the sauce into soup
 #Look for meta the image in the soup (source code)
 find = soup.find("meta", property="og:image") #python looks for this in the source code
 imageurl = str(find)[15:-23]
-print(imageurl)
 username =  uInput.split("=", 1)[1]
-print("Username = " + username)
-
-filename = re.findall(r"[A-Z]\w+",uInput)
-filename = str(filename)[2:-2]
-print(filename)
 pic = ".jpg"
 
-#Look for display url and its img link
+#REGEX SEARCHES
+filename = re.findall(r"[A-Z]\S\w+",uInput)
+filename = str(filename)[2:-2]
 imgurl = re.findall(r"display_url\S+\s\S+", str(soup))
 imgurl = re.findall(r"http\S+\jpg", str(imgurl))
-#print("Regex found = " + str(imgurl))
-
 vidurl = re.findall(r"http\S+.mp4", str(soup))
-#print(vidurl)
-
 yt = re.findall(r"youtube", str(soup))
 
-def splitter():
-    print("")
+def splitter(detected):
+    print(detected)
     print("-------------------------------------------------------------------")
     print("")
 
-def dlpic():
+def info():
+    print("Filename = " + filename)
+    print("Imageurl = " + imageurl)
+
+def getthis(ftype):
     file = open(saveas, "wb")
-    for chunk in image.iter_content(100000):
+    for chunk in (ftype).iter_content(100000):
         file.write(chunk)
     file.close()
     print("File = " + saveas +" saved to: " + curpath)
 #
 if len(imgurl) > 1:
-    print("instagram gallery detected")
-    print("Images found = " +str(len(imgurl)-1))
-    count = len(imgurl)
-    for i in range(1, count):
-        splitter() #-----------------------------------------------------------------
+    #INSTAGRAM GALLERY
+    print("About: Instagram gallery " + "- Images found = " +str(len(imgurl)-1))
+    for i in range(1, len(imgurl)):
+        splitter("") #-----------------------------------------------------------------
         image = requests.get(imgurl[i])
-        print("Imageurl = " + imageurl)
         print("Filename = " + filename + str(i) + ".jpg")
+        print("Imageurl = " + imgurl[i])
         saveas = username + "_" + filename + str(i) + ".jpg"
-        dlpic() # open > DL > Close function
+        getthis(image) # open > DL > Close function
 elif len(yt) > 1:
-    print("youtube link detected")
-    splitter() #---------------------------------------------------------------------
+    #YOUTUBE IS SPECIAL
+    splitter("Youtube thumbnail") #---------------------------------------------------------------------
     yt = yt[0]
     os.chdir("notInstagram")
     curpath = os.getcwd()
-    #print(imgurl)
-    print("a")
-    print("Images found = 1")
-    image = requests.get(imageurl)
     filename = username
-    print("Imageurl = " + imageurl)
-    print("Filename = " + filename)
+    image = requests.get(imageurl)
+    info()
     saveas = username + pic
-    dlpic() # open > DL > Close function
+    getthis(image) # open > DL > Close function
 elif len(vidurl) > 1:
-    print("instagram video detected")
-    splitter() #---------------------------------------------------------------------
+    #INSTAGRAM VIDEO
+    #print("instagram video detected")
+    splitter("Going to get: Instagram video and video ") #---------------------------------------------------------------------
     vidurl = vidurl[0]
     video = requests.get(vidurl)
-    #filename = vidurl[53:]
+    print("Filename = " + filename)
     print("Videourl = " + vidurl)
-    print("Filename = " + filename)
     saveas = username + "_" + filename + ".mp4"
-    file = open(saveas, "wb")
-    for chunk in video.iter_content(100000):
-        file.write(chunk)
-    file.close()
-    print("File = " + saveas + " saved to: " + curpath)
-    splitter()
-    #print(imgurl)
-    print("Images found = " +str(len(imgurl)))
+    getthis(video)
+    splitter("") #---------------------------------------------------------------------
     image = requests.get(imageurl)
-    print("Imageurl = " + imageurl)
-    print("Filename = " + filename)
+    info()
     saveas = username + "_" + filename + pic
-    dlpic() # open > DL > Close function
+    getthis(image) # open > DL > Close function
 else:
-    print("single picture link")
-    splitter() #---------------------------------------------------------------------
-    #print(imgurl)
-    print("Images found = " +str(len(imgurl)))
+    #INSTAGRAM 1 picture
+    #print("single picture link")
+    splitter("Instagram picture") #---------------------------------------------------------------------
     image = requests.get(imageurl)
-    print("Imageurl = " + imageurl)
-    print("Filename = " + filename)
+    info()
     saveas = username + "_" + filename + pic
-    dlpic() # open > DL > Close function
+    getthis(image) # open > DL > Close function
