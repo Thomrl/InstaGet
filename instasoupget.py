@@ -56,7 +56,7 @@ if len(imgurl) > 1:
         saveas = username + "_" + filename + str(i) + ".jpg"
         getthis(image) # open > DL > Close function
 elif len(yt) > 1:
-    #YOUTUBE IS A LITTLE SPECIAL
+    #YOUTUBE IS SPECIAL
     splitter("Youtube thumbnail") #---------------------------------------------------------------------
     yt = yt[0]
     os.chdir("notInstagram")
@@ -68,7 +68,7 @@ elif len(yt) > 1:
     getthis(image) # open > DL > Close function
 elif len(vidurl) > 1:
     #INSTAGRAM VIDEO
-    splitter("Going to get: Instagram video and video ") #---------------------------------------------------------------------
+    splitter("Going to get: Instagram video and video thumbnail") #---------------------------------------------------------------------
     vidurl = vidurl[0]
     video = requests.get(vidurl)
     print("Filename = " + filename)
