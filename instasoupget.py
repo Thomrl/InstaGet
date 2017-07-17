@@ -7,21 +7,19 @@ if len(sys.argv) > 1:
 else:
     uInput = pyperclip.paste()
 
-#Save the pictures in this directory  
+#Save the pictures in this directory 
 os.chdir("E:\\instagram")
 curpath = os.getcwd()
 
 #Get the website and make it soup
 sauce = requests.get(uInput) #python looks up the link
 print("Given url: " +uInput) #python tells you which link it looks at
-#sauce.raise_for_status()
 soup = bs.BeautifulSoup(sauce.text, "lxml") #making the sauce into soup
 
 #Look for meta the image in the soup (source code)
 find = soup.find("meta", property="og:image") #python looks for this in the source code
 imageurl = str(find)[15:-23]
 username =  uInput.split("=", 1)[1]
-pic = ".jpg"
 
 #REGEX SEARCHES
 filename = re.findall(r"[A-Z]\S\w+",uInput)
@@ -58,7 +56,7 @@ if len(imgurl) > 1:
         saveas = username + "_" + filename + str(i) + ".jpg"
         getthis(image) # open > DL > Close function
 elif len(yt) > 1:
-    #YOUTUBE IS SPECIAL
+    #YOUTUBE IS A LITTLE SPECIAL
     splitter("Youtube thumbnail") #---------------------------------------------------------------------
     yt = yt[0]
     os.chdir("notInstagram")
@@ -66,11 +64,10 @@ elif len(yt) > 1:
     filename = username
     image = requests.get(imageurl)
     info()
-    saveas = username + pic
+    saveas = username + ".jpg"
     getthis(image) # open > DL > Close function
 elif len(vidurl) > 1:
     #INSTAGRAM VIDEO
-    #print("instagram video detected")
     splitter("Going to get: Instagram video and video ") #---------------------------------------------------------------------
     vidurl = vidurl[0]
     video = requests.get(vidurl)
@@ -81,13 +78,12 @@ elif len(vidurl) > 1:
     splitter("") #---------------------------------------------------------------------
     image = requests.get(imageurl)
     info()
-    saveas = username + "_" + filename + pic
+    saveas = username + "_" + filename + ".jpg"
     getthis(image) # open > DL > Close function
 else:
     #INSTAGRAM 1 picture
-    #print("single picture link")
     splitter("Instagram picture") #---------------------------------------------------------------------
     image = requests.get(imageurl)
     info()
-    saveas = username + "_" + filename + pic
+    saveas = username + "_" + filename + ".jpg"
     getthis(image) # open > DL > Close function
