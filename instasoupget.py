@@ -1,20 +1,17 @@
 #! python3.5
 import bs4 as bs, requests, sys, os, pyperclip, re
 
-#user input - Should be a link to either instagram or a youtube video
-if len(sys.argv) > 1:
+if len(sys.argv) > 1: #If windows RUN gets more words than 1 it assumes that the seconds word is the link and uses it
     uInput = " ".join(sys.argv[1:])
-else:
+else:                 #If the script just gets started without additional input it will take what's in the clipboard (Ctrl+c)
     uInput = pyperclip.paste()
+print("Given url: " +uInput)        #Shows the user which URL was passed
+username =  uInput.split("=", 1)[1] #Gets the instagram username to better organize downloaded pictures
 
-#Save the pictures in this directory 
-os.chdir("E:\\instagram")
-curpath = os.getcwd()
+os.chdir("E:\\instagram") #Chosen directory
+curpath = os.getcwd()     #puts the dir into a variable
 
-#Get the website and make it soup
-sauce = requests.get(uInput) #python looks up the link
-print("Given url: " +uInput) #python tells you which link it looks at
-username =  uInput.split("=", 1)[1]
+sauce = requests.get(uInput)                #Python gets the webpage
 soup = bs.BeautifulSoup(sauce.text, "lxml") #making the sauce into soup
 
 #REGEX SEARCHES
@@ -27,26 +24,22 @@ youtube = re.findall(r"youtube", str(soup))
 YTimageURL = re.findall(r"https://i.ytimg.com\S+.jpg", str(soup))
 
 def splitter(detected):
-    print(detected)
-    print("-------------------------------------------------------------------")
-    print("")
+    print(detected+"\n-------------------------------------------------------------------\n")
 
 def getthis(ftype):
     file = open(saveas, "wb")
     for chunk in (ftype).iter_content(100000):
         file.write(chunk)
     file.close()
-    print("File = " + saveas +" saved to: " + curpath)
+    print("File = " + saveas + " saved to: " + curpath) #Succes!
 
-def infoandget(typeUrl, ftype, fext): #filetype e.g image - fileextension e.g .jpg
-    print("Filename = " + filename)
-    print("Found url = " + typeUrl)
+def infoandget(typeUrl, ftype, fext): #typeUrl e.g imageUrl - filetype e.g image - fileextension e.g .jpg
     saveas = username + "_" + filename + fext
     file = open(saveas, "wb")
     for chunk in (ftype).iter_content(100000):
         file.write(chunk)
     file.close()
-    print("File = " + saveas +" saved to: " + curpath)
+    print("Filename = " + filename + "\nFound url = " + typeUrl + "\nFile = " + saveas +" saved to: " + curpath) #All the info
 #
 if len(youtube) > 10:
     #YOUTUBE IS SPECIAL
@@ -64,8 +57,7 @@ elif len(IGimageUrl) > 1:
         splitter("") #-----------------------------------------------------------------
         ImageUrl = IGimageUrl
         image = requests.get(ImageUrl[i])
-        print("Filename = " + filename + str(i) + ".jpg")
-        print("Imageurl = " + ImageUrl[i])
+        print("Filename = " + filename + str(i) + ".jpg \nImageurl = " + ImageUrl[i])
         saveas = username + "_" + filename + str(i) + ".jpg"
         getthis(image) # open > DL > Close function
 elif len(videoUrl) > 1:
