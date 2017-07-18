@@ -1,7 +1,5 @@
-# instagramSave
-Easily save instagram video and pictures.
-
-Can also save twitch clips and youtube thumbnails.
+# InstaGet
+Easily save instagram video/pictures, youtube thumbnails and twitch clips.
 
 Just copy a link from instagram like: "https://www.instagram.com/p/BWlUWkZD0pr/?taken-by=gaming1empire" run the script, and it will get downloaded.
 
