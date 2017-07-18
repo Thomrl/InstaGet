@@ -24,18 +24,24 @@ IGimageUrl = re.findall(r"display_url\S+\s\S+", str(soup))
 IGimageUrl = re.findall(r"http\S+\jpg", str(IGimageUrl))
 videoUrl = re.findall(r"http\S+.mp4", str(soup))
 youtube = re.findall(r"youtube", str(soup))
-ogImage = re.findall(r"https://i.ytimg.com\S+.jpg", str(soup))
+YTimageURL = re.findall(r"https://i.ytimg.com\S+.jpg", str(soup))
 
 def splitter(detected):
     print(detected)
     print("-------------------------------------------------------------------")
     print("")
 
-def info():
-    print("Filename = " + filename)
-    print("Imageurl = " + imageUrl)
-
 def getthis(ftype):
+    file = open(saveas, "wb")
+    for chunk in (ftype).iter_content(100000):
+        file.write(chunk)
+    file.close()
+    print("File = " + saveas +" saved to: " + curpath)
+
+def infoandget(typeUrl, ftype, fext): #filetype e.g image - fileextension e.g .jpg
+    print("Filename = " + filename)
+    print("Found url = " + typeUrl)
+    saveas = username + "_" + filename + fext
     file = open(saveas, "wb")
     for chunk in (ftype).iter_content(100000):
         file.write(chunk)
@@ -45,14 +51,12 @@ def getthis(ftype):
 if len(youtube) > 10:
     #YOUTUBE IS SPECIAL
     splitter("Youtube thumbnail") #---------------------------------------------------------------------
-    imageUrl = ogImage[0]
+    imageUrl = YTimageURL[0]
+    image = requests.get(imageUrl)
     os.chdir("notInstagram")
     curpath = os.getcwd()
     filename = username
-    image = requests.get(imageUrl)
-    info()
-    saveas = username + ".jpg"
-    getthis(image) # open > DL > Close function
+    infoandget(imageUrl, image, ".jpg")
 elif len(IGimageUrl) > 1:
     #INSTAGRAM GALLERY
     print("Instagram gallery " + "- Images found = " +str(len(IGimageUrl)-1))
@@ -69,21 +73,14 @@ elif len(videoUrl) > 1:
     splitter("Instagram video") #---------------------------------------------------------------------
     videoUrl = videoUrl[0]
     video = requests.get(videoUrl)
-    print("Filename = " + filename)
-    print("Videourl = " + videoUrl)
-    saveas = username + "_" + filename + ".mp4"
-    getthis(video)
+    infoandget(videoUrl, video, ".mp4")
     splitter("") #---------------------------------------------------------------------
     imageUrl = IGimageUrl[0]
     image = requests.get(imageUrl)
-    info()
-    saveas = username + "_" + filename + ".jpg"
-    getthis(image) # open > DL > Close function
+    infoandget(imageUrl, image, ".jpg")
 else:
     #INSTAGRAM 1 picture
     splitter("Instagram picture") #---------------------------------------------------------------------
     imageUrl = IGimageUrl[0]
     image = requests.get(imageUrl)
-    info()
-    saveas = username + "_" + filename + ".jpg"
-    getthis(image) # open > DL > Close function
+    infoandget(imageUrl, image, ".jpg")
