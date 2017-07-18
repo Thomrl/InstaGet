@@ -1,2 +1,2 @@
-@py c:\files\MyPythonScripts\instasoupget.py %*
+@py c:\files\MyPythonScripts\instaget.py %*
 @pause
