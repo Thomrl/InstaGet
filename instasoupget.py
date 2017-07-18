@@ -14,20 +14,17 @@ curpath = os.getcwd()
 #Get the website and make it soup
 sauce = requests.get(uInput) #python looks up the link
 print("Given url: " +uInput) #python tells you which link it looks at
-soup = bs.BeautifulSoup(sauce.text, "lxml") #making the sauce into soup
-
-#Look for meta the image in the soup (source code)
-find = soup.find("meta", property="og:image") #python looks for this in the source code
-imageurl = str(find)[15:-23]
 username =  uInput.split("=", 1)[1]
+soup = bs.BeautifulSoup(sauce.text, "lxml") #making the sauce into soup
 
 #REGEX SEARCHES
 filename = re.findall(r"[A-Z]\S\w+",uInput)
 filename = str(filename)[2:-2]
-imgurl = re.findall(r"display_url\S+\s\S+", str(soup))
-imgurl = re.findall(r"http\S+\jpg", str(imgurl))
-vidurl = re.findall(r"http\S+.mp4", str(soup))
-yt = re.findall(r"youtube", str(soup))
+IGimageUrl = re.findall(r"display_url\S+\s\S+", str(soup))
+IGimageUrl = re.findall(r"http\S+\jpg", str(IGimageUrl))
+videoUrl = re.findall(r"http\S+.mp4", str(soup))
+youtube = re.findall(r"youtube", str(soup))
+ogImage = re.findall(r"https://i.ytimg.com\S+.jpg", str(soup))
 
 def splitter(detected):
     print(detected)
@@ -36,7 +33,7 @@ def splitter(detected):
 
 def info():
     print("Filename = " + filename)
-    print("Imageurl = " + imageurl)
+    print("Imageurl = " + imageUrl)
 
 def getthis(ftype):
     file = open(saveas, "wb")
@@ -45,45 +42,48 @@ def getthis(ftype):
     file.close()
     print("File = " + saveas +" saved to: " + curpath)
 #
-if len(imgurl) > 1:
-    #INSTAGRAM GALLERY
-    print("About: Instagram gallery " + "- Images found = " +str(len(imgurl)-1))
-    for i in range(1, len(imgurl)):
-        splitter("") #-----------------------------------------------------------------
-        image = requests.get(imgurl[i])
-        print("Filename = " + filename + str(i) + ".jpg")
-        print("Imageurl = " + imgurl[i])
-        saveas = username + "_" + filename + str(i) + ".jpg"
-        getthis(image) # open > DL > Close function
-elif len(yt) > 1:
+if len(youtube) > 10:
     #YOUTUBE IS SPECIAL
     splitter("Youtube thumbnail") #---------------------------------------------------------------------
-    yt = yt[0]
+    imageUrl = ogImage[0]
     os.chdir("notInstagram")
     curpath = os.getcwd()
     filename = username
-    image = requests.get(imageurl)
+    image = requests.get(imageUrl)
     info()
     saveas = username + ".jpg"
     getthis(image) # open > DL > Close function
-elif len(vidurl) > 1:
+elif len(IGimageUrl) > 1:
+    #INSTAGRAM GALLERY
+    print("Instagram gallery " + "- Images found = " +str(len(IGimageUrl)-1))
+    for i in range(1, len(IGimageUrl)):
+        splitter("") #-----------------------------------------------------------------
+        ImageUrl = IGimageUrl
+        image = requests.get(ImageUrl[i])
+        print("Filename = " + filename + str(i) + ".jpg")
+        print("Imageurl = " + ImageUrl[i])
+        saveas = username + "_" + filename + str(i) + ".jpg"
+        getthis(image) # open > DL > Close function
+elif len(videoUrl) > 1:
     #INSTAGRAM VIDEO
-    splitter("Going to get: Instagram video and video thumbnail") #---------------------------------------------------------------------
-    vidurl = vidurl[0]
-    video = requests.get(vidurl)
+    splitter("Instagram video") #---------------------------------------------------------------------
+    videoUrl = videoUrl[0]
+    video = requests.get(videoUrl)
     print("Filename = " + filename)
-    print("Videourl = " + vidurl)
+    print("Videourl = " + videoUrl)
     saveas = username + "_" + filename + ".mp4"
     getthis(video)
     splitter("") #---------------------------------------------------------------------
-    image = requests.get(imageurl)
+    imageUrl = IGimageUrl[0]
+    image = requests.get(imageUrl)
     info()
     saveas = username + "_" + filename + ".jpg"
     getthis(image) # open > DL > Close function
 else:
     #INSTAGRAM 1 picture
     splitter("Instagram picture") #---------------------------------------------------------------------
-    image = requests.get(imageurl)
+    imageUrl = IGimageUrl[0]
+    image = requests.get(imageUrl)
     info()
     saveas = username + "_" + filename + ".jpg"
     getthis(image) # open > DL > Close function
