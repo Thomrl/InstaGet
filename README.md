@@ -18,4 +18,4 @@ Then I recommend setting up <a href="https://youtu.be/5CGe3iuDfn0">this</a> to t
 
 Make sure you have the modules: bs4, requests, pyperclip (If you dont know how to install modules it's shown here: http://i.imgur.com/Meww3nZ.png)
 
-Then simply use windows run (windows button + R) and type in: instaget.
+Then simply use windows run (windows button + R) and type in: instaget
