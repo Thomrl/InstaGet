@@ -31,7 +31,7 @@ def splitter(detected):
 def infoandget(typeUrl, ftype, fext): #typeUrl e.g imageUrl - filetype e.g image - fileextension e.g .jpg
     if filename == username: #If it's a youtube or twitch link
         saveas = filename + fext
-        os.chdir("notInstagram")  #Chosen directory
+        os.chdir("E:\\instagram\\notInstagram")  #Chosen directory
     else:
         saveas = username + "_" + filename + fext
         os.chdir("E:\\instagram") #Chosen directory
