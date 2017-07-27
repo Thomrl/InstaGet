@@ -51,7 +51,7 @@ if len(re.findall(r"youtube", str(soup))) > 10:
     infoandget(imageUrl, image, ".jpg")
 elif len(re.findall(r"twitch", str(soup))) > 10:
     #TWITCH CLIPS
-    splitter("Twitch clip") #---------------------------------------------------------------------
+    splitter("Twitch clip - These takes some time. Please be patient") #---------------------------------------------------------------------
     videoUrl = twitchUrl[0]
     video = requests.get(videoUrl)
     filename = str(twitchTitle).split("|", 1)[0] #Lots of clip titles seem to have "|" and windows cant use that for filenaming
