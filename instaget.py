@@ -26,7 +26,7 @@ twitchTitle = re.findall(r"\".+\"", str(twitchTitle))
 twitchTitle = str(twitchTitle)[3:-3]
 
 def splitter(detected):
-    print(detected+"\n-------------------------------------------------------------------\n")
+    print("\n-------------------------------------------------------------------\n"+detected+"\n")
 
 def infoandget(typeUrl, ftype, fext): #typeUrl e.g imageUrl - filetype e.g image - fileextension e.g .jpg
     if filename == username: #If it's a youtube or twitch link
@@ -54,14 +54,14 @@ elif len(re.findall(r"twitch", str(soup))) > 10:
     splitter("Twitch clip - These takes some time. Please be patient") #---------------------------------------------------------------------
     videoUrl = twitchUrl[0]
     video = requests.get(videoUrl)
-    filename = re.split('\"|:', str(twitchTitle))[0] #Lots of clip titles seem to have | or : and windows cant use that for filenaming
+    filename = re.split('\"|:', str(twitchTitle))[0]
     username = filename
     infoandget(videoUrl, video, ".mp4")
 elif len(IGimageUrl) > 1:
     #INSTAGRAM GALLERY
     print("Instagram gallery " + "- Images found = " +str(len(IGimageUrl)-1))
     for i in range(1, len(IGimageUrl)):
-        splitter("") #-----------------------------------------------------------------
+        splitter("Image "+str(i)) #-----------------------------------------------------------------
         imageUrl = IGimageUrl
         image = requests.get(imageUrl[i])
         filename = filename + str(i)
@@ -73,7 +73,7 @@ elif len(videoUrl) > 1:
     videoUrl = videoUrl[0]
     video = requests.get(videoUrl)
     infoandget(videoUrl, video, ".mp4")
-    splitter("") #---------------------------------------------------------------------
+    splitter("Video thumbnail") #---------------------------------------------------------------------
     imageUrl = IGimageUrl[0]
     image = requests.get(imageUrl)
     infoandget(imageUrl, image, ".jpg")
