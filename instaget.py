@@ -54,7 +54,7 @@ elif len(re.findall(r"twitch", str(soup))) > 10:
     splitter("Twitch clip - These takes some time. Please be patient") #---------------------------------------------------------------------
     videoUrl = twitchUrl[0]
     video = requests.get(videoUrl)
-    filename = str(twitchTitle).split("|", 1)[0] #Lots of clip titles seem to have "|" and windows cant use that for filenaming
+    filename = re.split('\"|:', str(twitchTitle))[0] #Lots of clip titles seem to have | or : and windows cant use that for filenaming
     username = filename
     infoandget(videoUrl, video, ".mp4")
 elif len(IGimageUrl) > 1:
