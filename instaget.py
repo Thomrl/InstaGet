@@ -24,7 +24,9 @@ twitchUrl = re.findall(r"http.+?[^\"]*", str(videoUrl))
 twitchTitle = re.findall(r"channel_title:.+\"", str(soup))
 twitchTitle = re.findall(r"\".+\"", str(twitchTitle))
 twitchTitle = str(twitchTitle)[3:-3]
-
+twitchTitle = re.findall(r"[^|\\☆\":<>/\*. ]\w+", str(twitchTitle))
+twitchTitle = " ".join(twitchTitle)
+print(str(twitchTitle))
 def splitter(detected):
     print("\n-------------------------------------------------------------------\n"+detected+"\n")
 
@@ -54,8 +56,8 @@ elif len(re.findall(r"twitch", str(soup))) > 10:
     splitter("Twitch clip - These takes some time. Please be patient") #---------------------------------------------------------------------
     videoUrl = twitchUrl[0]
     video = requests.get(videoUrl)
-    filename = re.split('\"|:', str(twitchTitle))[0]
-    username = filename
+    filename = str(twitchTitle)
+    username = str(filename)
     infoandget(videoUrl, video, ".mp4")
 elif len(IGimageUrl) > 1:
     #INSTAGRAM GALLERY
