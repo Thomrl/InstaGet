@@ -14,8 +14,8 @@ if len(re.findall(r"twitch", str(soup))) < 10:
     username =  uInput.split("=", 1)[1] #Gets the instagram username to better organize downloaded pictures
 
 #REGEX SEARCHES
-filename = re.findall(r"[A-Z]\S\w+",uInput)
-filename = str(filename)[2:-2]
+filename = re.findall(r"shortcode\S+\s\S[A-Z]\S+",str(soup)) #This way the script finds the exact code/name instead of messing it up.
+filename = "".join(str(filename)[15:-4]) #Deleting ['shortcode": " and ",'] so we get a code like this -> BYBmz_5DCfC
 IGimageUrl = re.findall(r"display_url\S+\s\S+", str(soup))
 IGimageUrl = re.findall(r"http\S+\jpg", str(IGimageUrl))
 videoUrl = re.findall(r"http\S+.mp4", str(soup))
@@ -23,10 +23,9 @@ YTimageURL = re.findall(r"https://i.ytimg.com\S+.jpg", str(soup))
 twitchUrl = re.findall(r"http.+?[^\"]*", str(videoUrl))
 twitchTitle = re.findall(r"channel_title:.+\"", str(soup))
 twitchTitle = re.findall(r"\".+\"", str(twitchTitle))
-twitchTitle = str(twitchTitle)[3:-3]
-twitchTitle = re.findall(r"[^|\\☆\":<>/\*. ]\w+", str(twitchTitle))
+twitchTitle = re.findall(r"[^|\\☆\":<>/\*. ]\w+", str(twitchTitle)[3:-3]) #To avoid characters that gives errors in filenames
 twitchTitle = " ".join(twitchTitle)
-print(str(twitchTitle))
+
 def splitter(detected):
     print("\n-------------------------------------------------------------------\n"+detected+"\n")
 
