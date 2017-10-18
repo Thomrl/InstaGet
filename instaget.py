@@ -25,10 +25,9 @@ twitchTitle = soup.select("title")[0].text
 twitchTitle = re.findall(r"[^|\\☆\":<>/\*. ]\w+", str(twitchTitle)) #To avoid characters that gives errors in filenames
 twitchTitle = " ".join(twitchTitle)
 
-def splitter(detected):
-    print("\n-------------------------------------------------------------------\n"+detected+"\n")
-
-def infoandget(typeUrl, ftype, fext): #typeUrl e.g imageUrl - filetype e.g image - fileextension e.g .jpg
+#THE BEAUTIFUL FUNCTION
+def infoandget(whichUrl, fext, sText): #typeUrl e.g imageUrl - filetype e.g image - fileextension e.g .jpg
+    print("\n-------------------------------------------------------------------\n"+sText+"\n")
     if filename == username: #If it's a youtube or twitch link
         saveas = filename + fext
         os.chdir("E:\\instagram\\notInstagram")  #Chosen directory
@@ -36,51 +35,30 @@ def infoandget(typeUrl, ftype, fext): #typeUrl e.g imageUrl - filetype e.g image
         saveas = username + "_" + filename + fext
         os.chdir("E:\\instagram") #Chosen directory
     curpath = os.getcwd()         #puts the dir into a variable
+    mediaUrl = whichUrl
+    media = requests.get(mediaUrl)
     file = open(saveas, "wb")
-    for chunk in (ftype).iter_content(100000):
+    for chunk in (media).iter_content(100000):
         file.write(chunk)
     file.close()
-    print("Filename = " + filename + fext + "\nFound url = " + typeUrl + "\nFile = " + saveas +" saved to: " + curpath) #All the info
-#
-if len(re.findall(r"youtube", str(soup))) > 10:
-    #YOUTUBE IS SPECIAL
-    splitter("Youtube thumbnail") #---------------------------------------------------------------------
-    imageUrl = YTimageURL[0]
-    image = requests.get(imageUrl)
+    print("Filename = " + filename + fext + "\nFound url = " + mediaUrl + "\nFile = " + saveas +" saved to: " + curpath) #All the info
+    
+#YOUTUBE, TWITCH or INSTAGRAM?
+if len(re.findall(r"youtube", str(soup))) > 10: #YOUTUBE THUMBNAIL------------------------
     filename = username
-    infoandget(imageUrl, image, ".jpg")
-elif len(re.findall(r"twitch", str(soup))) > 10:
-    #TWITCH CLIPS
-    splitter("Twitch clip - These takes some time. Please be patient") #---------------------------------------------------------------------
-    videoUrl = twitchUrl[0]
-    video = requests.get(videoUrl)
+    infoandget(YTimageURL[0], ".jpg", "Youtube thumbnail")
+elif len(re.findall(r"twitch", str(soup))) > 10:#TWITCH CLIPS-----------------------------
     filename = str(twitchTitle)
     username = str(filename)
-    infoandget(videoUrl, video, ".mp4")
-elif len(IGimageUrl) > 1:
-    #INSTAGRAM GALLERY
+    infoandget(twitchUrl[0], ".mp4", "Twitch clip - These takes some time. Please be patient")
+elif len(IGimageUrl) > 1: #---------------------#INSTAGRAM GALLERY------------------------
     print("Instagram gallery " + "- Images found = " +str(len(IGimageUrl)-1))
     for i in range(1, len(IGimageUrl)):
-        splitter("Image "+str(i)) #-----------------------------------------------------------------
         filename = re.findall(r"shortcode\"\S+\s\S\S+",str(soup))[0]
         filename = "".join(str(filename)[13:-2]) + str(i)
-        imageUrl = IGimageUrl
-        image = requests.get(imageUrl[i])
-        imageUrl = imageUrl[i]
-        infoandget(imageUrl, image, ".jpg")
-elif len(videoUrl) > 1:
-    #INSTAGRAM VIDEO
-    splitter("Instagram video") #---------------------------------------------------------------------
-    videoUrl = videoUrl[0]
-    video = requests.get(videoUrl)
-    infoandget(videoUrl, video, ".mp4")
-    splitter("Video thumbnail") #---------------------------------------------------------------------
-    imageUrl = IGimageUrl[0]
-    image = requests.get(imageUrl)
-    infoandget(imageUrl, image, ".jpg")
-else:
-    #INSTAGRAM 1 picture
-    splitter("Instagram picture") #---------------------------------------------------------------------
-    imageUrl = IGimageUrl[0]
-    image = requests.get(imageUrl)
-    infoandget(imageUrl, image, ".jpg")
+        infoandget(IGimageUrl[i], ".jpg", "Image "+str(i))
+elif len(videoUrl) > 1: #-----------------------#INSTAGRAM VIDEO--------------------------
+    infoandget(videoUrl, video, ".mp4", "Instagram video")
+    infoandget(videoUrl[0], ".jpg", "Video thumbnail")
+else: #-----------------------------------------#INSTAGRAM PICTURE------------------------
+    infoandget(IGimageUrl[0], ".jpg", "Instagram picture")
