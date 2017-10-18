@@ -1,24 +1,21 @@
 #! python3.5
 import bs4 as bs, requests, sys, os, pyperclip, re
 
-if len(sys.argv) > 1: #If windows RUN gets more words than 1 it assumes that the second word is the link and uses it
-    uInput = " ".join(sys.argv[1:])
-else:                 #If the script just gets started without additional input it will take what's in the clipboard (Ctrl+c)
-    uInput = pyperclip.paste()
-
 location = "C:\\InstaGet"#------------#THE MEDIA WILL BE SAVED TO THIS FOLDER.
 if not os.path.exists(location):      #To make sure there's a folder to save the media in
     os.mkdir(location)                #^^^^^^
 os.chdir(location)                    #Change the directory to this folder
 
+if len(sys.argv) > 1: #If windows RUN gets more words than 1 it assumes that the second word is the link and uses it
+    uInput = " ".join(sys.argv[1:])
+else:                 #If the script just gets started without additional input it will take what's in the clipboard (Ctrl+c)
+    uInput = pyperclip.paste()
+print("Given url: " +uInput)#Shows the user which URL was given
+
 sauce = requests.get(uInput)                #Python gets the webpage
 soup = bs.BeautifulSoup(sauce.text, "lxml") #making the sauce into soup
 
-print("Given url: " +uInput)                #Shows the user which URL was given
-if len(re.findall(r"twitch", str(soup))) < 10:
-    username =  uInput.split("=", 1)[1]     #Gets the instagram username to better organize downloaded pictures for instagram
-
-#REGEX SEARCHES - To find urls and information
+#REGEX SEARCHES / Other info - To find urls and information
 filename = re.findall(r"shortcode\"\S+\s\S\S+",str(soup)) #This way the script finds the exact code/name instead of messing it up. 
 filename = "".join(str(filename)[15:-4])                  #Deleting ['shortcode": " and ",'] so we get a code like this -> BYBmz_5DCfC
 IGimageUrl = re.findall(r"display_url\S+\s\S+", str(soup))
@@ -29,6 +26,8 @@ twitchUrl = re.findall(r"http.+?[^\"]*", str(videoUrl))
 twitchTitle = soup.select("title")[0].text
 twitchTitle = re.findall(r"[^|\\☆\":<>/\*. ]\w+", str(twitchTitle)) #To avoid characters that gives errors in filenames
 twitchTitle = " ".join(twitchTitle)
+if 10 < len(re.findall(r"instagram", str(soup))):
+    username = uInput.split("=", 1)[1]     #Gets the instagram username to better organize downloaded pictures for instagram
 
 #Function (Don't repeat yourself)
 def infoandget(mediaUrl, fext, sText): #mediaUrl e.g twitchUrl[0] - fext e.g .mp4 - sText e.g "Twitch clip...."
@@ -52,6 +51,7 @@ def infoandget(mediaUrl, fext, sText): #mediaUrl e.g twitchUrl[0] - fext e.g .mp
     
 #YOUTUBE, TWITCH or INSTAGRAM?
 if len(re.findall(r"youtube", str(soup))) > 10: #YOUTUBE THUMBNAIL------------------------
+    filename =  uInput.split("=", 1)[1]
     infoandget(YTimageURL[0], ".jpg", "Youtube thumbnail")
 elif len(re.findall(r"twitch", str(soup))) > 10:#TWITCH CLIPS-----------------------------
     filename = str(twitchTitle)
