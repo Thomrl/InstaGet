@@ -26,8 +26,9 @@ twitchUrl = re.findall(r"http.+?[^\"]*", str(videoUrl))
 twitchTitle = soup.select("title")[0].text
 twitchTitle = re.findall(r"[^|\\☆\":<>/\*. ]\w+", str(twitchTitle)) #To avoid characters that gives errors in filenames
 twitchTitle = " ".join(twitchTitle)
-if 10 < len(re.findall(r"instagram", str(soup))):
-    username = uInput.split("=", 1)[1]     #Gets the instagram username to better organize downloaded pictures for instagram
+if 10 < len(re.findall(r"instagram", str(soup))): #I only need this on instagram links
+    username = re.findall(r"@\w+", str(soup))[0] 
+    username = username.split("@", 1)[1]
 
 #Function (Don't repeat yourself)
 def infoandget(mediaUrl, fext, sText): #mediaUrl e.g twitchUrl[0] - fext e.g .mp4 - sText e.g "Twitch clip...."
@@ -51,7 +52,8 @@ def infoandget(mediaUrl, fext, sText): #mediaUrl e.g twitchUrl[0] - fext e.g .mp
     
 #YOUTUBE, TWITCH or INSTAGRAM?
 if len(re.findall(r"youtube", str(soup))) > 10: #YOUTUBE THUMBNAIL------------------------
-    filename =  uInput.split("=", 1)[1]
+    filename = re.findall(r"=\w+", uInput)[0]
+    filename = filename.split("=", 1)[1]
     infoandget(YTimageURL[0], ".jpg", "Youtube thumbnail")
 elif len(re.findall(r"twitch", str(soup))) > 10:#TWITCH CLIPS-----------------------------
     filename = str(twitchTitle)
