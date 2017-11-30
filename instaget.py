@@ -1,7 +1,7 @@
 #! python3.5
 import bs4 as bs, requests, sys, os, pyperclip, re
 
-location = "C:\\InstaGet"#------------#THE MEDIA WILL BE SAVED TO THIS FOLDER.
+location = "E:\\InstaGet"#------------#THE MEDIA WILL BE SAVED TO THIS FOLDER.
 if not os.path.exists(location):      #To make sure there's a folder to save the media in
     os.mkdir(location)                #^^^^^^
 os.chdir(location)                    #Change the directory to this folder
@@ -56,7 +56,7 @@ def infoandget(mediaUrl, fext, sText): #mediaUrl e.g twitchUrl[0] - fext e.g .mp
     
 #YOUTUBE, TWITCH or INSTAGRAM?
 if len(re.findall(r"youtube", str(soup))) > 10: #YOUTUBE THUMBNAIL------------------------
-    filename = re.findall(r"=\w+", uInput)[0]
+    filename = re.findall(r"=\S+", uInput)[0]
     filename = filename.split("=", 1)[1]
     infoandget(YTimageURL[0], ".jpg", "Youtube thumbnail")
 elif len(re.findall(r"twitch", str(soup))) > 10:#TWITCH CLIPS-----------------------------
