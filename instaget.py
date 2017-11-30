@@ -16,9 +16,7 @@ sauce = requests.get(uInput)                #Python gets the webpage
 soup = bs.BeautifulSoup(sauce.text, "lxml") #making the sauce into soup
 
 #REGEX SEARCHES / Other info - To find urls and information
-filename = re.findall(r"shortcode\"\S+\s\S\S+",str(soup)) #This way the script finds the exact code/name instead of messing it up. 
-filename = "".join(str(filename)[15:-4])                  #Deleting ['shortcode": " and ",'] so we get a code like this -> BYBmz_5DCfC
-IGimageUrl = re.findall(r"display_url\S+\s\S+", str(soup))
+IGimageUrl = re.findall(r"display_url\": .+?(?=\")", str(soup))
 IGimageUrl = re.findall(r"http\S+\jpg", str(IGimageUrl))
 videoUrl = re.findall(r"http\S+.mp4", str(soup))
 YTimageURL = re.findall(r"https://i.ytimg.com\S+.jpg", str(soup))
@@ -27,19 +25,25 @@ twitchTitle = soup.select("title")[0].text
 twitchTitle = re.findall(r"[^|\\☆\":<>/\*. ]\w+", str(twitchTitle)) #To avoid characters that gives errors in filenames
 twitchTitle = " ".join(twitchTitle)
 if 10 < len(re.findall(r"instagram", str(soup))): #I only need this on instagram links
+    filename = re.findall(r"shortcode\": \"\w+",str(soup))[0] #This way the script finds the exact code/name instead of messing it up. 
+    filename = filename.split('\"', 2)[-1]                  #Deleting ['shortcode": " and ",'] so we get a code like this -> BYBmz_5DCfC
     username = re.findall(r"@\w+", str(soup))[0] 
     username = username.split("@", 1)[1]
 
 #Function (Don't repeat yourself)
 def infoandget(mediaUrl, fext, sText): #mediaUrl e.g twitchUrl[0] - fext e.g .mp4 - sText e.g "Twitch clip...."
     print("\n-------------------------------------------------------------------\n"+sText+"\n")
-    if not 'username' in globals(): #This should be a twitch or youtube link. 
+    if not 'username' in globals(): #This should be a twitch or youtube link.
         saveas = filename + fext    #Combining filename and file extension into 1 variable to make it look more clean.
         folder = re.findall(r"\w+", sText)[0] #Finding the first word of the information text, to easily organize folders.
-        folder = "".join(folder)    #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         if not os.path.exists(folder): #To organize where the different media come  from
             os.mkdir(folder)        #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         os.chdir(folder)            #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        if folder == "Twitch":
+            for file in os.listdir():
+                if saveas == file:
+                    extraa = mediaUrl[-8:-4]
+                    saveas = filename + "_" + extraa + fext
     else:
         saveas = username + "_" + filename + fext#Combining instagram username_filename and file extension into 1 variable to make it look more clean.
     curpath = os.getcwd()           #Information for the user
@@ -61,8 +65,7 @@ elif len(re.findall(r"twitch", str(soup))) > 10:#TWITCH CLIPS-------------------
 elif len(IGimageUrl) > 1: #---------------------#INSTAGRAM GALLERY------------------------
     print("Instagram gallery " + "- Images found = " +str(len(IGimageUrl)-1))
     for i in range(1, len(IGimageUrl)):
-        filename = re.findall(r"shortcode\"\S+\s\S\S+",str(soup))[0]
-        filename = "".join(str(filename)[13:-2]) + str(i)
+        filename = filename + str(i)
         infoandget(IGimageUrl[i], ".jpg", "Image "+str(i))
 elif len(videoUrl) > 1: #-----------------------#INSTAGRAM VIDEO--------------------------
     infoandget(videoUrl[0], ".mp4", "Instagram video")
