@@ -52,8 +52,11 @@ def infoandget(mediaUrl, fext, sText): #mediaUrl e.g twitchUrl[0] - fext e.g .mp
     for chunk in (media).iter_content(100000):#^^^^
         file.write(chunk)           #^^^^^^
     file.close()                    #^^^^^^
-    print("Filename = " + filename + fext + "\nFound url = " + mediaUrl + "\nFile = " + saveas +" saved to: " + curpath) #All the info
-    
+    try:
+        print("Filename = " + filename + fext + "\nFound url = " + mediaUrl + "\nFile = " + saveas +" saved to: " + curpath) #All the info
+    except UnicodeEncodeError:
+        print("Error: A character in the filename couldnt be printed but the download should have been completed.\nFilename = " + "Error" + "\nFound url = " + mediaUrl + "\nFile = " +" saved to: " + curpath)
+        
 #YOUTUBE, TWITCH or INSTAGRAM?
 if len(re.findall(r"youtube", str(soup))) > 10: #YOUTUBE THUMBNAIL------------------------
     filename = re.findall(r"=\S+", uInput)[0]
