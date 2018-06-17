@@ -16,7 +16,7 @@ sauce = requests.get(uInput)                #Python gets the webpage
 soup = bs.BeautifulSoup(sauce.text, "lxml") #making the sauce into soup
 
 #REGEX SEARCHES / Other info - To find urls and information
-IGimageUrl = re.findall(r"display_url\": .+?(?=\")", str(soup))
+IGimageUrl = re.findall(r"display_url\":.+?(?=\")", str(soup))
 IGimageUrl = re.findall(r"http\S+\jpg", str(IGimageUrl))
 videoUrl = re.findall(r"http\S+.mp4", str(soup))
 YTimageURL = re.findall(r"https://i.ytimg.com\S+.jpg", str(soup))
@@ -25,10 +25,11 @@ twitchTitle = soup.select("title")[0].text
 twitchTitle = re.findall(r"[^|\\☆\":<>/\*. ]\w+", str(twitchTitle)) #To avoid characters that gives errors in filenames
 twitchTitle = " ".join(twitchTitle)
 if 10 < len(re.findall(r"instagram", str(soup))): #I only need this on instagram links
-    filename = re.findall(r"shortcode\": \"\w+",str(soup))[0] #This way the script finds the exact code/name instead of messing it up. 
+    filename = re.findall(r"shortcode\":\"\w+",str(soup))[0] #This way the script finds the exact code/name instead of messing it up.
     filename = filename.split('\"', 2)[-1]                  #Deleting ['shortcode": " and ",'] so we get a code like this -> BYBmz_5DCfC
-    username = re.findall(r"@\w+", str(soup))[0] 
+    username = re.findall(r"\(@\w+", str(soup))[0] 
     username = username.split("@", 1)[1]
+
 
 #Function (Don't repeat yourself)
 def infoandget(mediaUrl, fext, sText): #mediaUrl e.g twitchUrl[0] - fext e.g .mp4 - sText e.g "Twitch clip...."
@@ -64,7 +65,7 @@ if len(re.findall(r"youtube", str(soup))) > 10: #YOUTUBE THUMBNAIL--------------
     infoandget(YTimageURL[0], ".jpg", "Youtube thumbnail")
 elif len(re.findall(r"twitch", str(soup))) > 10:#TWITCH CLIPS-----------------------------
     filename = str(twitchTitle)
-    infoandget(twitchUrl[0], ".mp4", "Twitch clip - These takes some time. Please be patient")
+    infoandget(twitchUrl, ".mp4", "Twitch clip - These takes some time. Please be patient")
 elif len(IGimageUrl) > 1: #---------------------#INSTAGRAM GALLERY------------------------
     print("Instagram gallery " + "- Images found = " +str(len(IGimageUrl)-1))
     for i in range(1, len(IGimageUrl)):

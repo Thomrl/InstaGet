@@ -10,7 +10,9 @@ Download the script and bat file and throw them into your scripts folder.
 
 Run the bat file. (If you have setup the everyting as I've writen in Setup you can also use windows run (windows button + R) and type in: instaget + have a link copied
 
-Things you need: Python3.5. Python modules: bs4, requests, pyperclip, lxml. 
+Things you need: Python3.5. Python modules: bs4, requests, pyperclip, lxml.
+
+You can install them in cmd with "pip install [module]"
 
 Make sure you edit the directories in the code (line 34 and 37) and create the folders where you want the script to download to.
 
@@ -25,3 +27,7 @@ If you dont know how to install modules it's shown here: http://i.imgur.com/Meww
 Q: I changed the directories but it has stil chosen the wrong one. | A: Make sure you edit the filepath before the # as the # is a comment.
 
 Q: I've done everything explained here and it still doesnt work. | A: Have you remembered to copy a link from instagram, youtube or twitch, before running the script?
+
+# Known problems
+
+Twitch made it harder to scrape the video links, so that doesnt work at the moment
