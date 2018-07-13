@@ -1,7 +1,7 @@
 #! python3.5
 import bs4 as bs, requests, sys, os, pyperclip, re
 
-location = "E:\\InstaGet"#------------#THE MEDIA WILL BE SAVED TO THIS FOLDER.
+location = "C:\\InstaGet"#------------#THE MEDIA WILL BE SAVED TO THIS FOLDER.
 if not os.path.exists(location):      #To make sure there's a folder to save the media in
     os.mkdir(location)                #^^^^^^
 os.chdir(location)                    #Change the directory to this folder
@@ -20,10 +20,7 @@ IGimageUrl = re.findall(r"display_url\":.+?(?=\")", str(soup))
 IGimageUrl = re.findall(r"http\S+\jpg", str(IGimageUrl))
 videoUrl = re.findall(r"http\S+.mp4", str(soup))
 YTimageURL = re.findall(r"https://i.ytimg.com\S+.jpg", str(soup))
-twitchUrl = re.findall(r"http.+?[^\"]*", str(videoUrl))
 twitchTitle = soup.select("title")[0].text
-twitchTitle = re.findall(r"[^|\\☆\":<>/\*. ]\w+", str(twitchTitle)) #To avoid characters that gives errors in filenames
-twitchTitle = " ".join(twitchTitle)
 if 10 < len(re.findall(r"instagram", str(soup))): #I only need this on instagram links
     filename = re.findall(r"shortcode\":\"\w+",str(soup))[0] #This way the script finds the exact code/name instead of messing it up.
     filename = filename.split('\"', 2)[-1]                  #Deleting ['shortcode": " and ",'] so we get a code like this -> BYBmz_5DCfC
@@ -56,7 +53,7 @@ def infoandget(mediaUrl, fext, sText): #mediaUrl e.g twitchUrl[0] - fext e.g .mp
     try:
         print("Filename = " + filename + fext + "\nFound url = " + mediaUrl + "\nFile = " + saveas +" saved to: " + curpath) #All the info
     except UnicodeEncodeError:
-        print("Error: A character in the filename couldnt be printed but the download should have been completed.\nFilename = " + "Error" + "\nFound url = " + mediaUrl + "\nFile = " +" saved to: " + curpath)
+        print("Error: A character in the filename couldnt be printed but the download should have been completed.\nFilename = " + "Could not be printed" + "\nFound url = " + mediaUrl + "\nFile = " +" saved to: " + curpath)
         
 #YOUTUBE, TWITCH or INSTAGRAM?
 if len(re.findall(r"youtube", str(soup))) > 10: #YOUTUBE THUMBNAIL------------------------
@@ -64,8 +61,18 @@ if len(re.findall(r"youtube", str(soup))) > 10: #YOUTUBE THUMBNAIL--------------
     filename = filename.split("=", 1)[1]
     infoandget(YTimageURL[0], ".jpg", "Youtube thumbnail")
 elif len(re.findall(r"twitch", str(soup))) > 10:#TWITCH CLIPS-----------------------------
+    print("Twitch clip - These takes some time. Please be patient")
     filename = str(twitchTitle)
-    infoandget(twitchUrl, ".mp4", "Twitch clip - These takes some time. Please be patient")
+    from selenium import webdriver
+    browser = webdriver.Firefox()
+    browser.get(uInput)
+    elem = browser.find_element_by_css_selector(".tw-font-size-3")
+    twitchTitle = re.findall(r"[^[|\\☆\":<>/\*. ]\w+", str(elem.text)) #To avoid characters that gives errors in filenames
+    filename = " ".join(twitchTitle)
+    elem = browser.find_element_by_css_selector(".player-video > video:nth-child(1)")
+    twitchUrl = elem.get_attribute("src")
+    browser.quit()
+    infoandget(twitchUrl, ".mp4", "Twitch clip - "+filename)
 elif len(IGimageUrl) > 1: #---------------------#INSTAGRAM GALLERY------------------------
     print("Instagram gallery " + "- Images found = " +str(len(IGimageUrl)-1))
     for i in range(1, len(IGimageUrl)):
