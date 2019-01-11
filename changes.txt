@@ -1,0 +1,8 @@
+January 11, 2019
+  * Instagram media links now gets "?_nc_ht=instagram.faal2-1.fna.fbcdn.net" behind it, for it to work again.
+  * Twitch clips are now found at the right place again.
+  * Twitch titles are now found through selenium instead of beautifulsoup.
+
+
+January 11, 2019
+  * Changes.txt created

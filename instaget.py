@@ -1,7 +1,7 @@
 #! python3.5
 import bs4 as bs, requests, sys, os, pyperclip, re
 
-location = "C:\\InstaGet"#------------#THE MEDIA WILL BE SAVED TO THIS FOLDER.
+location = "E:\\InstaGet"#------------#THE MEDIA WILL BE SAVED TO THIS FOLDER.
 if not os.path.exists(location):      #To make sure there's a folder to save the media in
     os.mkdir(location)                #^^^^^^
 os.chdir(location)                    #Change the directory to this folder
@@ -16,11 +16,10 @@ sauce = requests.get(uInput)                #Python gets the webpage
 soup = bs.BeautifulSoup(sauce.text, "lxml") #making the sauce into soup
 
 #REGEX SEARCHES / Other info - To find urls and information
-IGimageUrl = re.findall(r"display_url\":.+?(?=\")", str(soup))
-IGimageUrl = re.findall(r"http\S+\jpg", str(IGimageUrl))
+displayUrl = re.findall(r"display_url\":.+?(?=\")", str(soup))
+IGimageUrl = re.findall(r"http\S+\jpg", str(displayUrl))
 videoUrl = re.findall(r"http\S+.mp4", str(soup))
 YTimageURL = re.findall(r"https://i.ytimg.com\S+.jpg", str(soup))
-twitchTitle = soup.select("title")[0].text
 if 10 < len(re.findall(r"instagram", str(soup))): #I only need this on instagram links
     filename = re.findall(r"shortcode\":\"\w+",str(soup))[0] #This way the script finds the exact code/name instead of messing it up.
     filename = filename.split('\"', 2)[-1]                  #Deleting ['shortcode": " and ",'] so we get a code like this -> BYBmz_5DCfC
@@ -45,6 +44,8 @@ def infoandget(mediaUrl, fext, sText): #mediaUrl e.g twitchUrl[0] - fext e.g .mp
     else:
         saveas = username + "_" + filename + fext#Combining instagram username_filename and file extension into 1 variable to make it look more clean.
     curpath = os.getcwd()           #Information for the user
+    if len(re.findall(r"instagram", str(uInput))) > 0:
+        mediaUrl = mediaUrl + "?_nc_ht=instagram.faal2-1.fna.fbcdn.net"#This is now needed in the image link.
     media = requests.get(mediaUrl)  #So python loads the website with the media
     file = open(saveas, "wb")       #Saving the media to the computer
     for chunk in (media).iter_content(100000):#^^^^
@@ -62,18 +63,20 @@ if len(re.findall(r"youtube", str(soup))) > 10: #YOUTUBE THUMBNAIL--------------
     infoandget(YTimageURL[0], ".jpg", "Youtube thumbnail")
 elif len(re.findall(r"twitch", str(soup))) > 10:#TWITCH CLIPS-----------------------------
     print("Twitch clip - These takes some time. Please be patient")
-    filename = str(twitchTitle)
     from selenium import webdriver
-    browser = webdriver.Firefox()
-    browser.get(uInput)
-    elem = browser.find_element_by_css_selector(".tw-font-size-3")
-    twitchTitle = re.findall(r"[^[|\\☆\":<>/\*. ]\w+", str(elem.text)) #To avoid characters that gives errors in filenames
+    browser = webdriver.Firefox() #Open firefox
+    browser.get(uInput)           #Open website
+    elem = browser.find_element_by_css_selector("span.tw-strong:nth-child(1)") #Find title
+    twitchTitle = elem.get_attribute("title")                                  #Get title
+    twitchTitle = re.findall(r"[^[|\\☆\":<>/\*. ]\w+", str(twitchTitle)) #To avoid characters that gives errors in filenames
     filename = " ".join(twitchTitle)
+    print(filename)
     elem = browser.find_element_by_css_selector(".player-video > video:nth-child(1)")
+    print(elem)
     twitchUrl = elem.get_attribute("src")
     browser.quit()
     infoandget(twitchUrl, ".mp4", "Twitch clip - "+filename)
-elif len(IGimageUrl) > 1: #---------------------#INSTAGRAM GALLERY------------------------
+elif len(displayUrl) > 1: #---------------------#INSTAGRAM GALLERY------------------------
     print("Instagram gallery " + "- Images found = " +str(len(IGimageUrl)-1))
     for i in range(1, len(IGimageUrl)):
         filename = filename + str(i)
